@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EsmeraldasOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans overflow-x-hidden">
+
+    <!-- ================= VIEW DE LOGIN ================= -->
+    <div id="view-login" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-lg max-w-md w-full border border-slate-100">
+            <div class="flex justify-center mb-4">
+                <img src="./colegio-esmeraldas.png" alt="EsmeraldasOS" class="h-16 w-auto" />
+            </div>
+            <div class="flex justify-center mb-6">
+                <div class="bg-blue-600 p-3 rounded-xl"><i class="fa-solid fa-lock text-2xl text-white"></i></div>
+            </div>
+            <h1 class="text-2xl font-bold text-center text-slate-800 mb-2">Acesso ao Sistema</h1>
+            <p class="text-center text-slate-500 mb-6 text-sm">Insira seu usuário e senha para acessar.</p>
+            
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Usuário</label>
+                    <input type="text" id="login-user" required placeholder="Seu nome de usuário" class="w-full rounded-lg border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 p-2.5 outline-none" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Senha</label>
+                    <input type="password" id="login-pass" required placeholder="Sua senha" class="w-full rounded-lg border border-slate-300 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 p-2.5 outline-none" />
+                </div>
+                <p id="login-error" class="text-red-500 text-sm text-center hidden"></p>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition-colors mt-2">
+                    Entrar no Sistema
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+
+    <!-- ================= SISTEMA PRINCIPAL ================= -->
+    <div id="view-app" class="hidden min-h-screen">
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="navigate('dashboard')">
+                    <div class="bg-blue-600 p-2 rounded-lg"><i class="fa-solid fa-clipboard-list text-white"></i></div>
+                    <img src="./colegio-esmeraldas.png" alt="EsmeraldasOS" class="h-10 w-auto hidden sm:block" />
+                    <h1 class="font-bold text-xl tracking-tight text-slate-800 hidden sm:block">Esmeraldas<span class="text-blue-600">OS</span></h1>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div id="nav-admin" class="hidden items-center bg-slate-100 rounded-lg p-1 border border-slate-200">
+                        <button onclick="navigate('admin')" class="px-3 py-1.5 text-sm font-medium rounded-md text-slate-500 hover:text-slate-700 hover:bg-white">Usuários</button>
+                        <button onclick="navigate('dashboard')" class="px-3 py-1.5 text-sm font-medium rounded-md text-slate-500 hover:text-slate-700 hover:bg-white">Pedidos</button>
+                    </div>
+
+                    <button onclick="navigate('team')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors">
+                        <i class="fa-solid fa-users"></i> <span class="hidden sm:inline">Equipe</span>
+                    </button>
+
+                    <button id="btn-new-ticket" onclick="navigate('new-ticket')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors">
+                        <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Novo Pedido</span>
+                    </button>
+
+                    <div class="flex items-center gap-3 border-l border-slate-200 pl-4">
+                        <div class="text-right hidden sm:block">
+                            <p id="user-name-display" class="text-sm font-bold text-slate-800 leading-tight"></p>
+                            <p id="user-role-display" class="text-xs text-slate-500 capitalize"></p>
+                        </div>
+                        <div class="bg-slate-100 p-2 rounded-full"><i class="fa-solid fa-user text-slate-600"></i></div>
+                        <button onclick="handleLogout()" class="text-slate-400 hover:text-red-600 transition-colors ml-2" title="Sair"><i class="fa-solid fa-arrow-right-from-bracket text-lg"></i></button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
+            
+            <div id="view-dashboard">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <h2 id="dashboard-title" class="text-xl font-bold text-slate-800">Painel Operacional</h2>
+                    <div id="dashboard-filters" class="flex bg-slate-200 p-1 rounded-lg gap-1 overflow-x-auto w-full sm:w-auto">
+                        <button onclick="setFilter('Todas')" class="filter-btn px-4 py-2 text-sm font-medium rounded-md bg-white text-blue-700 shadow-sm" data-filter="Todas">Visão Geral</button>
+                        <button onclick="setFilter('Manutenção')" class="filter-btn px-4 py-2 text-sm font-medium rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-300/50" data-filter="Manutenção">Manutenção</button>
+                        <button onclick="setFilter('Compras')" class="filter-btn px-4 py-2 text-sm font-medium rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-300/50" data-filter="Compras">Compras</button>
+                    </div>
+                </div>
+                <div id="dashboard-content"></div>
+            </div>
+
+            <div id="view-new-ticket" class="hidden max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
+                    <div class="bg-blue-100 p-2 rounded-lg"><i class="fa-solid fa-plus text-blue-600"></i></div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Nova Solicitação</h2>
+                        <p class="text-sm text-slate-500">Seu pedido será registrado com seu usuário atual.</p>
+                    </div>
+                </div>
+                <form onsubmit="handleSubmitTicket(event)" class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="space-y-1">
+                            <label class="text-sm font-medium text-slate-700">Categoria do Pedido</label>
+                            <select id="nt-category" class="w-full rounded-lg border border-slate-300 p-2.5 outline-none focus:border-blue-500">
+                                <option value="Manutenção">Manutenção</option>
+                                <option value="Compras">Compras</option>
+                                <option value="Eventos">Eventos</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-sm font-medium text-slate-700">Urgência</label>
+                            <select id="nt-urgency" class="w-full rounded-lg border border-slate-300 p-2.5 outline-none focus:border-blue-500">
+                                <option value="Baixa">Baixa (Até 7 dias)</option>
+                                <option value="Média">Média (Até 48h)</option>
+                                <option value="Alta">Alta (Imediata)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-sm font-medium text-slate-700">Local Exato</label>
+                        <input id="nt-location" required type="text" placeholder="Ex: Bloco A - Sala 4" class="w-full rounded-lg border border-slate-300 p-2.5 outline-none focus:border-blue-500" />
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-sm font-medium text-slate-700">Resumo do Pedido</label>
+                        <input id="nt-title" required type="text" placeholder="Ex: Ar condicionado pingando" class="w-full rounded-lg border border-slate-300 p-2.5 outline-none focus:border-blue-500" />
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-sm font-medium text-slate-700">Descrição Detalhada</label>
+                        <textarea id="nt-description" required rows="4" placeholder="Descreva o problema..." class="w-full rounded-lg border border-slate-300 p-2.5 outline-none focus:border-blue-500"></textarea>
+                    </div>
+                    <div class="flex gap-3 pt-4 border-t border-slate-100">
+                        <button type="button" onclick="navigate('dashboard')" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200">Cancelar</button>
+                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex-1">Enviar Pedido</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="view-team" class="hidden space-y-6 max-w-5xl mx-auto">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="bg-blue-100 p-2 rounded-lg"><i class="fa-solid fa-users text-blue-600"></i></div>
+                    <h2 class="text-xl font-bold text-slate-800">Equipe</h2>
+                    <p class="text-sm text-slate-500">Relação de todos os funcionários da instituição.</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto custom-scrollbar">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Nome</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Cargo</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Departamentos</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Gestor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="team-table-body" class="bg-white divide-y divide-slate-200"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="view-admin" class="hidden space-y-6 max-w-5xl mx-auto">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="bg-slate-800 p-2 rounded-lg"><i class="fa-solid fa-gear text-white"></i></div>
+                    <h2 class="text-xl font-bold text-slate-800">Gestão de Usuários</h2>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-6">
+                    <h3 class="font-bold text-slate-800 mb-4"><i class="fa-solid fa-plus text-blue-600 mr-2"></i> Cadastrar Novo Usuário</h3>
+                    <p class="text-xs text-slate-500 mb-4">Defina o nome de usuário e a senha para o novo funcionário.</p>
+                    <form onsubmit="handleAddUser(event)" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+                        <div class="md:col-span-3 space-y-1">
+                            <label class="text-xs font-medium text-slate-600">Nome Completo</label>
+                            <input id="au-name" required type="text" class="w-full text-sm rounded-md border border-slate-300 p-2 outline-none focus:border-blue-500" />
+                        </div>
+                        <div class="md:col-span-2 space-y-1">
+                            <label class="text-xs font-medium text-slate-600">Nome de Usuário</label>
+                            <input id="au-username" required type="text" placeholder="Ex: michele.infantil" class="w-full text-sm rounded-md border border-slate-300 p-2 outline-none focus:border-blue-500" />
+                        </div>
+                        <div class="md:col-span-2 space-y-1">
+                            <label class="text-xs font-medium text-slate-600">Senha</label>
+                            <input id="au-password" required type="password" minlength="6" class="w-full text-sm rounded-md border border-slate-300 p-2 outline-none focus:border-blue-500" />
+                        </div>
+                        <div class="md:col-span-2 space-y-1">
+                            <label class="text-xs font-medium text-slate-600">Cargo / Função</label>
+                            <select id="au-role" required class="w-full text-sm rounded-md border border-slate-300 p-2 outline-none focus:border-blue-500 bg-white">
+                                <option value="">Selecione...</option>
+                                <option value="Diretor(a)">Diretor(a)</option>
+                                <option value="Vice-Diretor(a)">Vice-Diretor(a)</option>
+                                <option value="Coordenador(a) Pedagógico(a)">Coordenador(a) Pedagógico(a)</option>
+                                <option value="Coordenador(a) de Turno">Coordenador(a) de Turno</option>
+                                <option value="Secretário(a) Escolar">Secretário(a) Escolar</option>
+                                <option value="Auxiliar de Secretaria">Auxiliar de Secretaria</option>
+                                <option value="Técnico(a) de Manutenção">Técnico(a) de Manutenção</option>
+                                <option value="Analista de Compras">Analista de Compras</option>
+                                <option value="Auxiliar de Compras">Auxiliar de Compras</option>
+                                <option value="Analista Financeiro(a)">Analista Financeiro(a)</option>
+                                <option value="Auxiliar Financeiro(a)">Auxiliar Financeiro(a)</option>
+                                <option value="Administrador(a) de TI">Administrador(a) de TI</option>
+                                <option value="Professor(a)">Professor(a)</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Múltiplos Departamentos -->
+                        <div class="md:col-span-3 space-y-1">
+                            <label class="text-xs font-medium text-slate-600">Departamentos (Múltiplos)</label>
+                            <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2 rounded-md border border-slate-200 text-xs">
+                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="direcao" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> Direção</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="coordenacao" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> Coord.</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="secretaria" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> Secret.</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="manutencao" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> Manut.</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="compras" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> Compras</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="financeiro" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> Financ.</label>
+                            </div>
+                        </div>
+
+                        <!-- Vínculo de Gestão (Apenas se for marcado departamento Secretaria) -->
+                        <div id="au-manager-container" class="md:col-span-3 space-y-1 hidden">
+                            <label class="text-xs font-medium text-slate-600">Gestor (Coord. / Direção)</label>
+                            <select id="au-manager" class="w-full text-sm rounded-md border border-slate-300 p-2 outline-none focus:border-blue-500">
+                                <option value="">Selecione...</option>
+                            </select>
+                        </div>
+
+                        <div class="md:col-span-12 flex justify-end mt-2">
+                            <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white py-2 px-6 rounded-md text-sm font-medium transition-colors">Cadastrar Funcionário</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tabela de Usuários com Scroll Horizontal Ativado -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto custom-scrollbar">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Nome / Cargo</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Nome de Usuário</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Cargo</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Departamentos</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Gestor</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body" class="bg-white divide-y divide-slate-200"></tbody>
+                    </table>
+                </div>
+
+                <!-- Categorização de Pedidos (Admin) -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="bg-amber-100 p-2 rounded-lg"><i class="fa-solid fa-tags text-amber-600"></i></div>
+                        <h3 class="font-bold text-slate-800">Categorização de Pedidos</h3>
+                        <p class="text-sm text-slate-500">Gerencie os pedidos por status de aprovação.</p>
+                    </div>
+
+                    <div id="admin-ticket-tabs" class="flex bg-slate-200 p-1 rounded-lg gap-1 mb-6 w-fit">
+                        <button onclick="setAdminTicketFilter('aguardando')" class="admin-tab-btn px-4 py-2 text-sm font-medium rounded-md bg-white text-amber-700 shadow-sm" data-cat="aguardando">Aguardando Aprovação</button>
+                        <button onclick="setAdminTicketFilter('aprovado')" class="admin-tab-btn px-4 py-2 text-sm font-medium rounded-md text-slate-600 hover:text-slate-900" data-cat="aprovado">Aprovado</button>
+                        <button onclick="setAdminTicketFilter('recusado')" class="admin-tab-btn px-4 py-2 text-sm font-medium rounded-md text-slate-600 hover:text-slate-900" data-cat="recusado">Recusado</button>
+                    </div>
+
+                    <div id="admin-tickets-container" class="space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar pr-2"></div>
+                    <p id="admin-tickets-empty" class="text-sm text-slate-400 text-center py-8 hidden">Nenhum pedido nesta categoria.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ================= MODAIS ================= -->
+    <div id="modal-finance" class="hidden fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden">
+            <div class="p-4 border-b border-slate-100 bg-slate-50"><h3 class="font-bold text-slate-800"><i class="fa-solid fa-dollar-sign text-blue-600 mr-2"></i> Detalhar Pedido de Compra</h3></div>
+            <div class="p-6">
+                <p class="text-sm text-slate-600 mb-4">Descreva o que o departamento de Compras/Financeiro precisa adquirir:</p>
+                <textarea id="finance-note" rows="4" class="w-full rounded-lg border border-slate-300 p-3 text-sm outline-none focus:border-blue-500"></textarea>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button onclick="closeModal('modal-finance')" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium">Cancelar</button>
+                    <button onclick="confirmFinanceRequest()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">Enviar ao Financeiro</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-approval" class="hidden fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden">
+            <div class="p-4 border-b border-slate-100 bg-slate-50"><h3 id="approval-title" class="font-bold"></h3></div>
+            <div class="p-6">
+                <p class="text-sm text-slate-600 mb-4">Adicione uma observação (opcional) para justificar a decisão:</p>
+                <textarea id="management-note" rows="4" class="w-full rounded-lg border border-slate-300 p-3 text-sm outline-none focus:border-blue-500"></textarea>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button onclick="closeModal('modal-approval')" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium">Cancelar</button>
+                    <button id="btn-confirm-approval" onclick="confirmApproval()" class="px-4 py-2 text-white rounded-lg text-sm font-medium">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-edit-user" class="hidden fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+            <div class="p-4 border-b border-slate-100 bg-slate-50">
+                <h3 class="font-bold text-slate-800"><i class="fa-solid fa-pen-to-square text-blue-600 mr-2"></i> Editar Usuário</h3>
+            </div>
+            <form onsubmit="saveEditUser(event)" class="p-6 space-y-4">
+                <div class="space-y-1">
+                    <label class="text-sm font-medium text-slate-700">Nome</label>
+                    <input id="eu-name" required type="text" class="w-full text-sm rounded-md border border-slate-300 p-2 outline-none focus:border-blue-500" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-sm font-medium text-slate-700">Nome de Usuário</label>
+                        <input id="eu-username" required type="text" class="w-full text-sm rounded-md border border-slate-300 p-2 outline-none focus:border-blue-500" />
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-sm font-medium text-slate-700">Nova Senha (deixe em branco para manter)</label>
+                        <input id="eu-password" type="password" minlength="6" class="w-full text-sm rounded-md border border-slate-300 p-2 outline-none focus:border-blue-500" placeholder="Em branco = manter atual" />
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-sm font-medium text-slate-700">Cargo / Função</label>
+                    <select id="eu-role" required class="w-full text-sm rounded-md border border-slate-300 p-2 outline-none focus:border-blue-500 bg-white">
+                        <option value="">Selecione...</option>
+                        <option value="Diretor(a)">Diretor(a)</option>
+                        <option value="Vice-Diretor(a)">Vice-Diretor(a)</option>
+                        <option value="Coordenador(a) Pedagógico(a)">Coordenador(a) Pedagógico(a)</option>
+                        <option value="Coordenador(a) de Turno">Coordenador(a) de Turno</option>
+                        <option value="Secretário(a) Escolar">Secretário(a) Escolar</option>
+                        <option value="Auxiliar de Secretaria">Auxiliar de Secretaria</option>
+                        <option value="Técnico(a) de Manutenção">Técnico(a) de Manutenção</option>
+                        <option value="Analista de Compras">Analista de Compras</option>
+                        <option value="Auxiliar de Compras">Auxiliar de Compras</option>
+                        <option value="Analista Financeiro(a)">Analista Financeiro(a)</option>
+                        <option value="Auxiliar Financeiro(a)">Auxiliar Financeiro(a)</option>
+                        <option value="Administrador(a) de TI">Administrador(a) de TI</option>
+                        <option value="Professor(a)">Professor(a)</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+                
+                <!-- Múltiplos Departamentos na Edição -->
+                <div class="space-y-1">
+                    <label class="text-sm font-medium text-slate-700">Departamentos (Múltiplos)</label>
+                    <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2 rounded-md border border-slate-200 text-xs">
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="direcao" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> Direção</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="coordenacao" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> Coord.</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="secretaria" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> Secret.</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="manutencao" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> Manut.</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="compras" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> Compras</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="financeiro" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> Financ.</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer col-span-2"><input type="checkbox" name="eu-dept" value="admin" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> TI (Admin)</label>
+                    </div>
+                </div>
+
+                <div id="eu-manager-container" class="space-y-1 hidden">
+                    <label class="text-sm font-medium text-slate-700">Gestor (Coord. / Direção)</label>
+                    <select id="eu-manager" class="w-full text-sm rounded-md border border-slate-300 p-2 outline-none focus:border-blue-500">
+                        <option value="">Selecione...</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="closeModal('modal-edit-user')" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- BANCO DE DADOS (localStorage) ---
+        function carregarDados() {
+            const stored = localStorage.getItem('colegio_esmeraldas_data');
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    return { users: data.users || [], tickets: data.tickets || [] };
+                } catch (e) {
+                    // fallback se corromper
+                }
+            }
+            return null;
+        }
+
+        function salvarDados() {
+            localStorage.setItem('colegio_esmeraldas_data', JSON.stringify({ users, tickets }));
+        }
+
+        const defaults = {
+            users: [
+                { id: 'u1', name: 'Guilherme Macchia', username: 'guilherme', password: 'admin123', role: 'Administrador(a) de TI', departments: ['admin'], phone: '', document: '', managerId: '' },
+                { id: 'u2', name: 'Michele - Infantil', username: 'michele.infantil', password: '123mudar', role: 'Coordenador(a) Pedagógico(a)', departments: ['coordenacao'], phone: '', document: '', managerId: '' },
+                { id: 'u3', name: 'Ana Lúcia - Fundamental 1', username: 'analucia.fund1', password: '123mudar', role: 'Coordenador(a) Pedagógico(a)', departments: ['coordenacao'], phone: '', document: '', managerId: '' },
+                { id: 'u4', name: 'Sandro - Fundamental 2 e Médio', username: 'sandro.fund2', password: '123mudar', role: 'Coordenador(a) Pedagógico(a)', departments: ['coordenacao'], phone: '', document: '', managerId: '' }
+            ],
+            tickets: []
+        };
+
+        const saved = carregarDados();
+        let users = saved ? saved.users.map(u => ({ ...u, isFirstLogin: undefined, email: undefined, username: u.username || u.email?.split('@')[0] || u.name.split(' ')[0].toLowerCase() })) : [...defaults.users];
+        let tickets = saved ? saved.tickets : [];
+
+        // --- ESTADO GLOBAL ---
+        let currentUser = null;
+        let currentFilter = 'Todas';
+        let adminTicketFilter = 'aguardando';
+        let tempTicketId = null; 
+        let tempApprovalAction = null; 
+        let userToEdit = null; 
+
+        // --- FUNÇÕES DE UTILIDADE ---
+        const getElement = id => document.getElementById(id);
+        const hide = id => getElement(id).classList.add('hidden');
+        const show = id => getElement(id).classList.remove('hidden');
+
+        // --- MÁSCARAS BRASILEIRAS (CPF E TELEFONE) ---
+        function applyCPFMask(input) {
+            let value = input.value.replace(/\D/g, ""); 
+            if (value.length > 11) value = value.slice(0, 11); 
+            
+            value = value.replace(/(\d{3})(\d)/, "$1.$2");
+            value = value.replace(/(\d{3})(\d)/, "$1.$2");
+            value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            
+            input.value = value;
+        }
+
+        function applyPhoneMask(input) {
+            let value = input.value.replace(/\D/g, ""); 
+            if (value.length > 11) value = value.slice(0, 11); 
+
+            if (value.length > 10) {
+                value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3");
+                value = value.replace(/^(\d{2})(\d)/, "($1) $2");
+                value = value.replace(/(\d{5})(\d)/, "$1-$2");
+            } else {
+                value = value.replace(/^(\d{2})(\d{4})(\d{4})$/, "($1) $2-$3");
+                value = value.replace(/^(\d{2})(\d)/, "($1) $2");
+                value = value.replace(/(\d{4})(\d)/, "$1-$2");
+            }
+            
+            input.value = value;
+        }
+
+        // Alterna campo de Gestor baseado na existência do departamento 'secretaria' marcado
+        function toggleManagerSelect(nameGroup, containerId) {
+            const checkboxes = document.querySelectorAll(`input[name="${nameGroup}"]:checked`);
+            let isSecretaria = false;
+            checkboxes.forEach(cb => {
+                if (cb.value === 'secretaria') isSecretaria = true;
+            });
+
+            const container = getElement(containerId);
+            if (isSecretaria) {
+                container.classList.remove('hidden');
+                populateManagersDropdown(nameGroup === 'au-dept' ? 'au-manager' : 'eu-manager');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        // Popula as opções de gestores ativos no dropdown (Direção ou Coordenação)
+        function populateManagersDropdown(selectId, selectedId = '') {
+            const select = getElement(selectId);
+            const managers = users.filter(u => u.departments && (u.departments.includes('coordenacao') || u.departments.includes('direcao')));
+            
+            select.innerHTML = '<option value="">Selecione...</option>' + 
+                managers.map(m => `<option value="${m.id}" ${m.id === selectedId ? 'selected' : ''}>${m.name} (${m.departments.includes('direcao') ? 'Direção' : 'Coord.'})</option>`).join('');
+        }
+
+        // Determina quem pode gerenciar cada status de forma granular unindo departamentos do usuário
+        const getAvailableStatuses = (departments, currentStatus) => {
+            if (!departments) return [currentStatus];
+            if (departments.includes('admin')) return ['Pendente', 'Em Andamento', 'Aguardando Financeiro', 'Liberado para Compra', 'Comprado', 'Concluído', 'Aguardando Aprovação', 'Rejeitado'];
+            if (currentStatus === 'Aguardando Aprovação' || currentStatus === 'Rejeitado') return [currentStatus];
+            
+            let possibleStatuses = [currentStatus];
+
+            if (departments.includes('manutencao')) {
+                if (currentStatus === 'Pendente') possibleStatuses.push('Em Andamento', 'Concluído');
+                if (currentStatus === 'Em Andamento') possibleStatuses.push('Aguardando Financeiro', 'Concluído');
+                if (currentStatus === 'Comprado') possibleStatuses.push('Em Andamento', 'Concluído');
+                if (currentStatus === 'Concluído') possibleStatuses.push('Em Andamento');
+            }
+            if (departments.includes('compras')) {
+                if (currentStatus === 'Pendente') possibleStatuses.push('Em Andamento', 'Concluído');
+                if (currentStatus === 'Em Andamento') possibleStatuses.push('Aguardando Financeiro', 'Concluído');
+                if (currentStatus === 'Liberado para Compra') possibleStatuses.push('Comprado');
+                if (currentStatus === 'Comprado') possibleStatuses.push('Concluído');
+                if (currentStatus === 'Concluído') possibleStatuses.push('Em Andamento');
+            }
+            if (departments.includes('financeiro')) {
+                if (currentStatus === 'Aguardando Financeiro') possibleStatuses.push('Liberado para Compra');
+                if (currentStatus === 'Liberado para Compra') possibleStatuses.push('Aguardando Financeiro');
+            }
+            
+            return [...new Set(possibleStatuses)];
+        };
+
+        // --- AUTENTICAÇÃO ---
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = getElement('login-user').value.toLowerCase().trim();
+            const pass = getElement('login-pass').value;
+            const user = users.find(u => u.username === username && u.password === pass);
+            
+            if (user) {
+                completeLoginProcess(user);
+            } else {
+                const err = getElement('login-error');
+                err.innerText = 'Usuário ou senha incorretos.';
+                show('login-error');
+            }
+        }
+
+        function completeLoginProcess(user) {
+            currentUser = user;
+            getElement('login-user').value = '';
+            getElement('login-pass').value = '';
+            hide('view-login');
+            show('view-app');
+            
+            getElement('user-name-display').innerText = user.name;
+            getElement('user-role-display').innerText = user.role;
+            
+            if(user.departments && user.departments.includes('admin')) {
+                getElement('nav-admin').classList.replace('hidden', 'flex');
+            } else {
+                getElement('nav-admin').classList.replace('flex', 'hidden');
+            }
+
+            if(user.departments && user.departments.includes('manutencao') && user.departments.length === 1) {
+                hide('btn-new-ticket');
+            } else {
+                show('btn-new-ticket');
+            }
+
+            navigate(user.departments && user.departments.includes('admin') ? 'admin' : 'dashboard');
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            hide('view-app');
+            show('view-login');
+        }
+
+        // --- NAVEGAÇÃO ---
+        function navigate(view) {
+            hide('view-dashboard');
+            hide('view-new-ticket');
+            hide('view-admin');
+            hide('view-team');
+            show(`view-${view}`);
+
+            if(view === 'dashboard') renderDashboard();
+            if(view === 'admin') { renderAdminTable(); setAdminTicketFilter('aguardando'); }
+            if(view === 'team') renderTeamTable();
+        }
+
+        // --- RENDERIZAÇÃO DO DASHBOARD ---
+        function setFilter(cat) {
+            currentFilter = cat;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if(btn.dataset.filter === cat) {
+                    btn.className = "filter-btn px-4 py-2 text-sm font-medium rounded-md bg-white text-blue-700 shadow-sm";
+                } else {
+                    btn.className = "filter-btn px-4 py-2 text-sm font-medium rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-300/50";
+                }
+            });
+            renderDashboard();
+        }
+
+        function generateTicketCard(ticket) {
+            const availableStatuses = getAvailableStatuses(currentUser.departments, ticket.status);
+            const canEdit = availableStatuses.length > 1;
+            
+            let showApprovalControls = false;
+            if (ticket.status === 'Aguardando Aprovação') {
+                if (currentUser.departments.includes('direcao') || currentUser.departments.includes('admin')) {
+                    showApprovalControls = true;
+                } else if (currentUser.departments.includes('coordenacao')) {
+                    const requesterUser = users.find(u => u.name === ticket.requester);
+                    if (requesterUser && requesterUser.managerId === currentUser.id) {
+                        showApprovalControls = true;
+                    }
+                }
+            }
+            
+            let statusBadgeClass = 'bg-slate-100 text-slate-700';
+            if(ticket.status === 'Concluído') statusBadgeClass = 'bg-green-100 text-green-700';
+            else if(ticket.status === 'Em Andamento') statusBadgeClass = 'bg-blue-100 text-blue-700';
+            else if(ticket.status === 'Aguardando Financeiro') statusBadgeClass = 'bg-purple-100 text-purple-700';
+            else if(ticket.status === 'Liberado para Compra') statusBadgeClass = 'bg-indigo-100 text-indigo-700';
+            else if(ticket.status === 'Comprado') statusBadgeClass = 'bg-teal-100 text-teal-700';
+            else if(ticket.status === 'Aguardando Aprovação') statusBadgeClass = 'bg-amber-100 text-amber-700';
+            else if(ticket.status === 'Rejeitado') statusBadgeClass = 'bg-red-100 text-red-700';
+
+            let urgencyColor = ticket.urgency === 'Alta' ? 'bg-red-100 text-red-800 border-red-200' : 
+                               (ticket.urgency === 'Média' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : 'bg-green-100 text-green-800 border-green-200');
+
+            // Determina qual departamento exibir no rodapé do ticket
+            const deptDisplay = getDepartmentNameByTag(ticket.department);
+
+            let html = `
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3">
+                <div class="flex justify-between items-start">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid ${ticket.category === 'Manutenção' ? 'fa-wrench text-blue-500' : 'fa-cart-shopping text-purple-500'}"></i>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">#${ticket.id} • ${ticket.category}</span>
+                    </div>
+                    <span class="px-2 py-1 rounded-full text-xs font-semibold border ${urgencyColor}">${ticket.urgency}</span>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-800 line-clamp-1" title="${ticket.title}">${ticket.title}</h3>
+                    <p class="text-sm text-slate-600 mt-1 line-clamp-2" title="${ticket.description}">${ticket.description}</p>
+                </div>`;
+
+            if(ticket.financeNote) {
+                html += `<div class="mt-1 bg-yellow-50 p-2 rounded-lg border border-yellow-200 text-sm">
+                            <span class="font-bold text-yellow-800"><i class="fa-solid fa-dollar-sign"></i> Detalhes:</span>
+                            <p class="text-yellow-900">${ticket.financeNote}</p>
+                         </div>`;
+            }
+            if(ticket.managementNote) {
+                html += `<div class="mt-1 bg-blue-50 p-2 rounded-lg border border-blue-200 text-sm">
+                            <span class="font-bold text-blue-800"><i class="fa-solid fa-shield-halved"></i> Gestão:</span>
+                            <p class="text-blue-900">${ticket.managementNote}</p>
+                         </div>`;
+            }
+
+            html += `
+                <div class="flex flex-col gap-1 mt-auto pt-3 border-t border-slate-100 text-xs text-slate-500">
+                    <div><i class="fa-solid fa-user w-4"></i> ${ticket.requester} (${deptDisplay})</div>
+                    <div><i class="fa-solid fa-location-dot w-4"></i> ${ticket.location}</div>
+                    <div><i class="fa-solid fa-calendar w-4"></i> ${ticket.date}</div>
+                </div>`;
+
+            if (canEdit && ticket.status !== 'Aguardando Aprovação') {
+                html += `<div class="mt-2"><select onchange="handleStatusChange('${ticket.id}', this.value)" class="w-full text-sm border border-slate-300 rounded-md p-1.5 outline-none bg-slate-50">`;
+                availableStatuses.forEach(s => { html += `<option value="${s}" ${s === ticket.status ? 'selected' : ''}>${s}</option>`; });
+                html += `</select></div>`;
+            } else if (showApprovalControls) {
+                html += `<div class="mt-2 flex gap-2">
+                            <button onclick="openApprovalModal('${ticket.id}', 'Pendente')" class="flex-1 bg-green-100 text-green-700 py-1.5 rounded-md text-sm font-bold hover:bg-green-200">Aprovar</button>
+                            <button onclick="openApprovalModal('${ticket.id}', 'Rejeitado')" class="flex-1 bg-red-100 text-red-700 py-1.5 rounded-md text-sm font-bold hover:bg-red-200">Rejeitar</button>
+                         </div>`;
+            } else {
+                html += `<div class="mt-2"><span class="text-xs font-bold px-2 py-1 rounded-md ${statusBadgeClass}">Estado: ${ticket.status}</span></div>`;
+            }
+
+            html += `</div>`;
+            return html;
+        }
+
+        function createColumn(title, iconClass, colorClass, borderClass, count, cardsHtml) {
+            return `
+            <div class="flex-none w-80 flex flex-col gap-4 bg-${colorClass}-50/50 p-4 rounded-xl border border-${borderClass}-100 min-h-[500px]">
+                <div class="flex items-center gap-2 mb-2 text-${colorClass}-800">
+                    <i class="${iconClass} text-${colorClass}-500"></i><h3 class="font-bold">${title} (${count})</h3>
+                </div>
+                ${cardsHtml}
+            </div>`;
+        }
+
+        function getDepartmentNameByTag(tag) {
+            const departments = {
+                'direcao': 'Direção', 'coordenacao': 'Coordenação', 'secretaria': 'Secretaria',
+                'manutencao': 'Manutenção', 'compras': 'Compras', 'financeiro': 'Financeiro', 'admin': 'TI'
+            };
+            return departments[tag] || tag;
+        }
+
+        function renderDashboard() {
+            const container = getElement('dashboard-content');
+            let baseTickets = [];
+            const userDepts = currentUser.departments || [];
+
+            // --- LÓGICA DE VISIBILIDADE UNIFICADA PARA MULTI-DEPARTAMENTOS ---
+            if (userDepts.includes('admin') || userDepts.includes('financeiro') || userDepts.includes('direcao')) {
+                // Direção, Admin e Financeiro possuem acesso absoluto a todos os tickets da escola
+                baseTickets = tickets;
+            } else {
+                // União de privilégios de visibilidade por departamento do usuário
+                let visibleTicketIds = new Set();
+                
+                if (userDepts.includes('manutencao')) {
+                    tickets.filter(t => t.category === 'Manutenção' || t.department === 'manutencao')
+                           .forEach(t => visibleTicketIds.add(t.id));
+                }
+                if (userDepts.includes('compras')) {
+                    tickets.filter(t => t.category === 'Compras' || ['Liberado para Compra', 'Comprado'].includes(t.status))
+                           .forEach(t => visibleTicketIds.add(t.id));
+                }
+                if (userDepts.includes('secretaria')) {
+                    tickets.filter(t => t.requester === currentUser.name)
+                           .forEach(t => visibleTicketIds.add(t.id));
+                }
+                if (userDepts.includes('coordenacao')) {
+                    tickets.filter(t => {
+                        if (t.requester === currentUser.name) return true;
+                        const requesterUser = users.find(u => u.name === t.requester);
+                        return requesterUser && requesterUser.managerId === currentUser.id;
+                    }).forEach(t => visibleTicketIds.add(t.id));
+                }
+                
+                baseTickets = tickets.filter(t => visibleTicketIds.has(t.id));
+            }
+
+            if (currentFilter !== 'Todas') {
+                baseTickets = baseTickets.filter(t => t.category === currentFilter);
+            }
+
+            // Definição do layout apropriado dependendo da combinação de departamentos
+            const isSecretariaOnly = userDepts.length === 1 && userDepts.includes('secretaria');
+            const hasManagement = userDepts.includes('direcao') || userDepts.includes('coordenacao');
+            const hasOperacional = userDepts.includes('admin') || userDepts.includes('manutencao') || userDepts.includes('compras');
+            const hasFinanceiro = userDepts.includes('financeiro');
+
+            // 1. Se tem Secretaria APENAS -> Tela de listagem simples
+            if (isSecretariaOnly) {
+                getElement('dashboard-title').innerText = `Meus Pedidos (${userDepts.map(getDepartmentNameByTag).join(' / ')})`;
+                hide('dashboard-filters');
+                container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    ${baseTickets.map(generateTicketCard).join('') || '<p class="text-slate-500">Você não fez pedidos.</p>'}
+                </div>`;
+                return;
+            }
+            
+            show('dashboard-filters');
+            getElement('dashboard-title').innerText = userDepts.includes('admin') ? 'Visão Geral (Admin)' : `Painel Operacional (${userDepts.map(getDepartmentNameByTag).join(' / ')})`;
+
+            const getHtmlForStatus = (status) => baseTickets.filter(t => t.status === status).map(generateTicketCard).join('');
+            const getCount = (status) => baseTickets.filter(t => t.status === status).length;
+
+            // 2. Se tem Direção/Coordenação mas não Operacional completo -> Renderiza visão de Aprovação Gestão
+            if (hasManagement && !hasOperacional && !hasFinanceiro) {
+                hide('dashboard-filters');
+                container.innerHTML = `
+                <div class="flex flex-col gap-8">
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-5">
+                        <h3 class="font-bold text-amber-800 mb-4"><i class="fa-solid fa-shield-halved"></i> Aguardando Minha Aprovação (${getCount('Aguardando Aprovação')})</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${getHtmlForStatus('Aguardando Aprovação')}</div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-200 pb-2">Acompanhamento dos Meus Setores</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            ${baseTickets.filter(t => t.status !== 'Aguardando Aprovação').map(generateTicketCard).join('')}
+                        </div>
+                    </div>
+                </div>`;
+                return;
+            }
+
+            // 3. Se possui Financeiro APENAS -> Visão curta de 2 Colunas Financeiras
+            if (hasFinanceiro && !hasOperacional) {
+                hide('dashboard-filters');
+                container.innerHTML = `
+                <div class="flex overflow-x-auto pb-4 gap-6 items-stretch snap-x custom-scrollbar">
+                    ${createColumn('Aprovar Verba', 'fa-solid fa-circle-dollar-to-slot', 'purple', 'purple', getCount('Aguardando Financeiro'), getHtmlForStatus('Aguardando Financeiro'))}
+                    ${createColumn('Liberados p/ Compra', 'fa-solid fa-credit-card', 'indigo', 'indigo', getCount('Liberado para Compra'), getHtmlForStatus('Liberado para Compra'))}
+                </div>`;
+                return;
+            }
+
+            // 4. Caso possua privilégios operacionais, admin, ou múltiplos papéis abrangentes -> Kanban Completo de Rolagem
+            let kanbanHtml = '<div class="flex overflow-x-auto pb-4 gap-6 items-stretch snap-x custom-scrollbar">';
+            
+            // Administrador, Direção ou Financeiro conseguem visualizar a coluna de triagem gerencial inicial
+            if (userDepts.includes('admin') || userDepts.includes('financeiro') || userDepts.includes('direcao')) {
+                kanbanHtml += createColumn('Aprovação Gestão', 'fa-solid fa-shield-halved', 'amber', 'amber', getCount('Aguardando Aprovação'), getHtmlForStatus('Aguardando Aprovação'));
+            }
+            
+            kanbanHtml += createColumn('Pendentes', 'fa-solid fa-triangle-exclamation', 'slate', 'slate', getCount('Pendente'), getHtmlForStatus('Pendente'));
+            kanbanHtml += createColumn('Em Andamento', 'fa-solid fa-clock', 'blue', 'blue', getCount('Em Andamento'), getHtmlForStatus('Em Andamento'));
+            kanbanHtml += createColumn('Aguard. Financeiro', 'fa-solid fa-circle-dollar-to-slot', 'purple', 'purple', getCount('Aguardando Financeiro'), getHtmlForStatus('Aguardando Financeiro'));
+            kanbanHtml += createColumn('Lib. p/ Comprar', 'fa-solid fa-credit-card', 'indigo', 'indigo', getCount('Liberado para Compra'), getHtmlForStatus('Liberado para Compra'));
+            kanbanHtml += createColumn('Comprado', 'fa-solid fa-box', 'teal', 'teal', getCount('Comprado'), getHtmlForStatus('Comprado'));
+            kanbanHtml += createColumn('Concluídos', 'fa-solid fa-check-circle', 'green', 'green', getCount('Concluído'), getHtmlForStatus('Concluído'));
+            
+            kanbanHtml += '</div>';
+            container.innerHTML = kanbanHtml;
+        }
+
+        // --- AÇÕES DE TICKETS ---
+        function handleSubmitTicket(e) {
+            e.preventDefault();
+            // Pedidos enviados por quem tem departamento de Secretaria vão para aprovação
+            const needsApproval = currentUser.departments.includes('secretaria');
+            
+            const newTicket = {
+                id: Math.floor(1000 + Math.random() * 9000).toString(),
+                title: getElement('nt-title').value,
+                description: getElement('nt-description').value,
+                category: getElement('nt-category').value,
+                urgency: getElement('nt-urgency').value,
+                location: getElement('nt-location').value,
+                requester: currentUser.name,
+                department: needsApproval ? 'secretaria' : currentUser.departments[0],
+                status: needsApproval ? 'Aguardando Aprovação' : 'Pendente',
+                date: new Date().toLocaleDateString('pt-BR')
+            };
+
+            tickets.unshift(newTicket);
+            salvarDados();
+            e.target.reset();
+            navigate('dashboard');
+        }
+
+        function handleStatusChange(id, newStatus) {
+            if (newStatus === 'Aguardando Financeiro') {
+                tempTicketId = id;
+                getElement('finance-note').value = '';
+                show('modal-finance');
+            } else {
+                updateStatus(id, newStatus);
+            }
+        }
+
+        function updateStatus(id, newStatus, extraProps = {}) {
+            const index = tickets.findIndex(t => t.id === id);
+            if(index > -1) {
+                tickets[index] = { ...tickets[index], status: newStatus, ...extraProps };
+                salvarDados();
+                renderDashboard();
+            }
+        }
+
+        function confirmFinanceRequest() {
+            const note = getElement('finance-note').value;
+            if(!note.trim()) return alert("Por favor, descreva os detalhes da compra.");
+            updateStatus(tempTicketId, 'Aguardando Financeiro', { financeNote: note });
+            closeModal('modal-finance');
+        }
+
+        function openApprovalModal(id, action) {
+            tempTicketId = id;
+            tempApprovalAction = action;
+            getElement('management-note').value = '';
+            
+            const titleEl = getElement('approval-title');
+            const btnEl = getElement('btn-confirm-approval');
+            
+            if(action === 'Pendente') {
+                titleEl.innerHTML = '<i class="fa-solid fa-check-circle text-green-600 mr-2"></i> Aprovar Solicitação';
+                btnEl.className = "px-4 py-2 text-white rounded-lg text-sm font-medium bg-green-600 hover:bg-green-700";
+            } else {
+                titleEl.innerHTML = '<i class="fa-solid fa-xmark-circle text-red-600 mr-2"></i> Rejeitar Solicitação';
+                btnEl.className = "px-4 py-2 text-white rounded-lg text-sm font-medium bg-red-600 hover:bg-red-700";
+            }
+            show('modal-approval');
+        }
+
+        function confirmApproval() {
+            const note = getElement('management-note').value.trim();
+            updateStatus(tempTicketId, tempApprovalAction, note ? { managementNote: note } : {});
+            closeModal('modal-approval');
+        }
+
+        // --- GESTÃO DE USUÁRIOS (ADMIN) ---
+        function renderAdminTable() {
+            const tbody = getElement('users-table-body');
+            tbody.innerHTML = users.map(user => {
+                let vinculationText = 'Nenhum';
+                if (user.departments && user.departments.includes('secretaria') && user.managerId) {
+                    const mgr = users.find(u => u.id === user.managerId);
+                    if (mgr) vinculationText = `<span class="text-blue-600 font-semibold">${mgr.name}</span>`;
+                }
+
+                let detailsText = '';
+                if(user.phone || user.document) {
+                    detailsText = `<br><span class="text-slate-400 text-xs"><i class="fa-solid fa-phone"></i> ${user.phone || '-'} | <i class="fa-solid fa-id-card"></i> ${user.document || '-'}</span>`;
+                }
+
+                const deptBadges = (user.departments || []).map(d => 
+                    `<span class="px-1.5 py-0.5 text-xs bg-slate-100 text-slate-700 border border-slate-200 rounded-md font-medium whitespace-nowrap">${getDepartmentNameByTag(d)}</span>`
+                ).join(' ');
+
+                return `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">${user.name} ${detailsText}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${user.username}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-semibold">${user.role}</td>
+                    <td class="px-6 py-4 text-sm text-slate-500"><div class="flex flex-wrap gap-1">${deptBadges}</div></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${vinculationText}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2">
+                        <button onclick="openEditUser('${user.id}')" class="text-blue-600 hover:text-blue-900 bg-blue-50 p-1.5 rounded" title="Editar Usuário"><i class="fa-solid fa-pen"></i></button>
+                    </td>
+                </tr>
+            `;}).join('');
+        }
+
+        function renderTeamTable() {
+            const tbody = getElement('team-table-body');
+            tbody.innerHTML = users.map(user => {
+                let vinculationText = 'Nenhum';
+                if (user.departments && user.departments.includes('secretaria') && user.managerId) {
+                    const mgr = users.find(u => u.id === user.managerId);
+                    if (mgr) vinculationText = `<span class="text-blue-600 font-semibold">${mgr.name}</span>`;
+                }
+
+                const deptBadges = (user.departments || []).map(d =>
+                    `<span class="px-1.5 py-0.5 text-xs bg-slate-100 text-slate-700 border border-slate-200 rounded-md font-medium whitespace-nowrap">${getDepartmentNameByTag(d)}</span>`
+                ).join(' ');
+
+                return `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">${user.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-semibold">${user.role}</td>
+                    <td class="px-6 py-4 text-sm text-slate-500"><div class="flex flex-wrap gap-1">${deptBadges}</div></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${vinculationText}</td>
+                </tr>
+            `;}).join('');
+        }
+
+        // --- CATEGORIZAÇÃO DE PEDIDOS (ADMIN) ---
+        function getAdminCategory(ticket) {
+            if (ticket.status === 'Aguardando Aprovação') return 'aguardando';
+            if (ticket.status === 'Rejeitado') return 'recusado';
+            return 'aprovado';
+        }
+
+        function setAdminTicketFilter(cat) {
+            adminTicketFilter = cat;
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                if (btn.dataset.cat === cat) {
+                    btn.className = "admin-tab-btn px-4 py-2 text-sm font-medium rounded-md bg-white text-amber-700 shadow-sm";
+                } else {
+                    btn.className = "admin-tab-btn px-4 py-2 text-sm font-medium rounded-md text-slate-600 hover:text-slate-900";
+                }
+            });
+            renderAdminTickets();
+        }
+
+        function renderAdminTickets() {
+            const container = getElement('admin-tickets-container');
+            const empty = getElement('admin-tickets-empty');
+
+            const filtered = tickets.filter(t => getAdminCategory(t) === adminTicketFilter);
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+
+            container.innerHTML = filtered.map(ticket => {
+                const requesterUser = users.find(u => u.name === ticket.requester);
+                const requesterDept = requesterUser ? requesterUser.departments?.map(getDepartmentNameByTag).join(', ') || '-' : '-';
+
+                let actionsHtml = '';
+                if (adminTicketFilter === 'aguardando') {
+                    actionsHtml = `
+                        <button onclick="updateStatus('${ticket.id}', 'Pendente'); renderAdminTickets();" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded text-xs font-bold">Aprovar</button>
+                        <button onclick="updateStatus('${ticket.id}', 'Rejeitado'); renderAdminTickets();" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded text-xs font-bold">Recusar</button>
+                    `;
+                } else if (adminTicketFilter === 'aprovado') {
+                    actionsHtml = `
+                        <button onclick="updateStatus('${ticket.id}', 'Rejeitado'); renderAdminTickets();" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded text-xs font-bold">Mover para Recusado</button>
+                    `;
+                } else if (adminTicketFilter === 'recusado') {
+                    actionsHtml = `
+                        <button onclick="updateStatus('${ticket.id}', 'Pendente'); renderAdminTickets();" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded text-xs font-bold">Mover para Aprovado</button>
+                    `;
+                }
+
+                return `
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-slate-400 uppercase">#${ticket.id}</span>
+                            <span class="text-sm font-semibold text-slate-800 truncate">${ticket.title}</span>
+                        </div>
+                        <div class="flex items-center gap-3 mt-1 text-xs text-slate-500">
+                            <span><i class="fa-solid fa-user"></i> ${ticket.requester}</span>
+                            <span><i class="fa-solid fa-building"></i> ${requesterDept}</span>
+                            <span><i class="fa-solid fa-tag"></i> ${ticket.category}</span>
+                            <span><i class="fa-solid fa-calendar"></i> ${ticket.date}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 ml-4 shrink-0">
+                        ${actionsHtml}
+                    </div>
+                </div>
+            `;}).join('');
+        }
+
+        function handleAddUser(e) {
+            e.preventDefault();
+            
+            const deptCheckboxes = document.querySelectorAll('input[name="au-dept"]:checked');
+            const selectedDepts = Array.from(deptCheckboxes).map(cb => cb.value);
+
+            if(selectedDepts.length === 0) {
+                alert("Por favor, selecione pelo menos um departamento.");
+                return;
+            }
+            if(selectedDepts.includes('admin')) {
+                alert("Funcionários comuns não podem ter o departamento TI (Admin).");
+                return;
+            }
+            
+            const username = getElement('au-username').value.toLowerCase().trim().replace(/\s+/g, '.');
+            if(users.some(u => u.username === username)) {
+                alert("Este nome de usuário já está em uso. Escolha outro.");
+                return;
+            }
+            
+            const newUser = {
+                id: 'u' + Math.floor(100 + Math.random() * 900),
+                name: getElement('au-name').value,
+                username: username,
+                password: getElement('au-password').value,
+                role: getElement('au-role').value, 
+                departments: selectedDepts, 
+                phone: '',
+                document: '',
+                managerId: selectedDepts.includes('secretaria') ? getElement('au-manager').value : ''
+            };
+            users.push(newUser);
+            salvarDados();
+            e.target.reset();
+            hide('au-manager-container');
+            renderAdminTable();
+        }
+
+        function openEditUser(id) {
+            userToEdit = users.find(u => u.id === id);
+            if (userToEdit) {
+                getElement('eu-name').value = userToEdit.name;
+                getElement('eu-username').value = userToEdit.username;
+                getElement('eu-password').value = '';
+                const roleSelect = getElement('eu-role');
+                if ([...roleSelect.options].some(o => o.value === userToEdit.role)) {
+                    roleSelect.value = userToEdit.role;
+                } else {
+                    roleSelect.value = 'Outro';
+                }
+                
+                document.querySelectorAll('input[name="eu-dept"]').forEach(cb => cb.checked = false);
+
+                if(userToEdit.departments) {
+                    userToEdit.departments.forEach(d => {
+                        const cb = document.querySelector(`input[name="eu-dept"][value="${d}"]`);
+                        if(cb) cb.checked = true;
+                    });
+                }
+                
+                const managerContainer = getElement('eu-manager-container');
+                if (userToEdit.departments && userToEdit.departments.includes('secretaria')) {
+                    managerContainer.classList.remove('hidden');
+                    populateManagersDropdown('eu-manager', userToEdit.managerId);
+                } else {
+                    managerContainer.classList.add('hidden');
+                }
+                
+                show('modal-edit-user');
+            }
+        }
+
+        function saveEditUser(e) {
+            e.preventDefault();
+            if (userToEdit) {
+                const deptCheckboxes = document.querySelectorAll('input[name="eu-dept"]:checked');
+                const selectedDepts = Array.from(deptCheckboxes).map(cb => cb.value);
+
+                if(selectedDepts.length === 0) {
+                    alert("Selecione pelo menos um departamento.");
+                    return;
+                }
+                if(selectedDepts.includes('admin') && !currentUser.departments.includes('admin')) {
+                    alert("Você não pode atribuir o departamento TI (Admin).");
+                    return;
+                }
+
+                const newUsername = getElement('eu-username').value.toLowerCase().trim().replace(/\s+/g, '.');
+                if(newUsername !== userToEdit.username && users.some(u => u.username === newUsername)) {
+                    alert("Este nome de usuário já está em uso.");
+                    return;
+                }
+
+                userToEdit.name = getElement('eu-name').value;
+                userToEdit.username = newUsername;
+                const newPass = getElement('eu-password').value;
+                if(newPass) userToEdit.password = newPass;
+                userToEdit.role = getElement('eu-role').value;
+                userToEdit.departments = selectedDepts;
+                userToEdit.managerId = selectedDepts.includes('secretaria') ? getElement('eu-manager').value : '';
+                salvarDados();
+                
+                renderAdminTable();
+                closeModal('modal-edit-user');
+            }
+        }
+
+        // --- CONTROLE GERAL DE MODAIS ---
+        function closeModal(id) {
+            hide(id);
+            tempTicketId = null;
+            tempApprovalAction = null;
+            userToEdit = null;
+        }
+    </script>
+</body>
+</html>
