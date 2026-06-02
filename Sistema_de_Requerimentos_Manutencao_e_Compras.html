@@ -13,6 +13,80 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* Dark mode */
+        .dark body { background: #0f172a; color: #e2e8f0; }
+        .dark #view-app header { background: #1e293b; border-color: #334155; }
+        .dark #view-app header h1 { color: #f1f5f9; }
+        .dark #view-app header .text-slate-800 { color: #f1f5f9; }
+        .dark #view-app header .text-slate-500 { color: #94a3b8; }
+        .dark #nav-admin { background: #334155; border-color: #475569; }
+        .dark #nav-admin button { color: #94a3b8; }
+        .dark #nav-admin button:hover { color: #e2e8f0; background: #1e293b; }
+        .dark #btn-new-ticket { background: #2563eb; }
+        .dark #btn-new-ticket:hover { background: #1d4ed8; }
+        .dark .bg-white { background: #1e293b; }
+        .dark .border-slate-100 { border-color: #334155; }
+        .dark .border-slate-200 { border-color: #334155; }
+        .dark .text-slate-800 { color: #f1f5f9; }
+        .dark .text-slate-700 { color: #cbd5e1; }
+        .dark .text-slate-600 { color: #94a3b8; }
+        .dark .text-slate-500 { color: #94a3b8; }
+        .dark .text-slate-400 { color: #64748b; }
+        .dark .bg-slate-50 { background: #1e293b; }
+        .dark .bg-slate-100 { background: #334155; }
+        .dark .bg-slate-200 { background: #475569; }
+        .dark .border-slate-300 { border-color: #475569; }
+        .dark .divide-slate-200 > * { border-color: #334155; }
+        .dark .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.3); }
+        .dark .bg-slate-800 { background: #0f172a; }
+        .dark .hover\:bg-slate-200:hover { background: #475569; }
+        .dark .hover\:bg-slate-300\/50:hover { background: rgba(71,85,105,0.5); }
+        .dark input, .dark select, .dark textarea { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        .dark input:focus, .dark select:focus, .dark textarea:focus { border-color: #3b82f6; }
+        .dark label { color: #cbd5e1; }
+        .dark .bg-amber-50 { background: #451a03; border-color: #78350f; }
+        .dark .text-amber-800 { color: #fbbf24; }
+        .dark .text-amber-700 { color: #f59e0b; }
+        .dark .text-amber-600 { color: #d97706; }
+        .dark .bg-amber-100 { background: #451a03; }
+        .dark .text-red-100 { background: #7f1d1d; }
+        .dark .bg-green-100 { background: #14532d; }
+        .dark .bg-blue-100 { background: #1e3a5f; }
+        .dark .bg-purple-100 { background: #3b0764; }
+        .dark .bg-indigo-100 { background: #312e81; }
+        .dark .bg-teal-100 { background: #134e4a; }
+        .dark .bg-yellow-50 { background: #451a03; border-color: #78350f; }
+        .dark .text-yellow-800 { color: #fbbf24; }
+        .dark .text-yellow-900 { color: #fde68a; }
+        .dark .bg-blue-50 { background: #1e3a5f; border-color: #1e40af; }
+        .dark .text-blue-800 { color: #93c5fd; }
+        .dark .text-blue-900 { color: #bfdbfe; }
+        .dark .text-blue-600 { color: #60a5fa; }
+        .dark .text-blue-500 { color: #3b82f6; }
+        .dark .bg-blue-600 { background: #2563eb; }
+        .dark .hover\:bg-blue-700:hover { background: #1d4ed8; }
+        .dark .text-slate-900 { color: #f1f5f9; }
+        .dark .text-red-600 { color: #f87171; }
+        .dark .text-green-700 { color: #4ade80; }
+        .dark .text-red-700 { color: #f87171; }
+        .dark .bg-slate-900\/50 { background: rgba(0,0,0,0.7); }
+        .dark .filter-btn.bg-white { background: #1e293b; }
+        .dark .admin-tab-btn.bg-white { background: #1e293b; }
+        .dark #view-login { background: #0f172a; }
+        .dark #view-login .bg-white { background: #1e293b; }
+        .dark .fixed.inset-0.bg-slate-900\/50 { background: rgba(0,0,0,0.7); }
+        .dark .text-slate-300 { color: #94a3b8; }
+        .dark .fa-solid, .dark .fa-regular, .dark .fa-brands { color: inherit; }
+        .dark .bg-slate-50\/50 { background: rgba(30,41,59,0.5); }
+        .dark .border-amber-100 { border-color: #78350f; }
+        .dark .border-blue-200 { border-color: #1e40af; }
+        .dark .border-yellow-200 { border-color: #78350f; }
+        .dark .border-green-200 { border-color: #166534; }
+        .dark .border-red-200 { border-color: #7f1d1d; }
+        .dark .border-slate-100 { border-color: #334155; }
+        .dark .text-white { color: #f8fafc; }
+        .dark .hover\:text-red-600:hover { color: #f87171; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans overflow-x-hidden">
@@ -78,6 +152,7 @@
                             <p id="user-role-display" class="text-xs text-slate-500 capitalize"></p>
                         </div>
                         <div class="bg-slate-100 p-2 rounded-full"><i class="fa-solid fa-user text-slate-600"></i></div>
+                        <button onclick="toggleTheme()" class="text-slate-400 hover:text-amber-500 transition-colors ml-2" title="Alternar tema" id="btn-theme"><i class="fa-solid fa-moon text-lg"></i></button>
                         <button onclick="handleLogout()" class="text-slate-400 hover:text-red-600 transition-colors ml-2" title="Sair"><i class="fa-solid fa-arrow-right-from-bracket text-lg"></i></button>
                     </div>
                 </div>
@@ -204,6 +279,10 @@
                                 <option value="Analista Financeiro(a)">Analista Financeiro(a)</option>
                                 <option value="Auxiliar Financeiro(a)">Auxiliar Financeiro(a)</option>
                                 <option value="Administrador(a) de TI">Administrador(a) de TI</option>
+                                <option value="Vendedoras">Vendedoras</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Inspetor(a)">Inspetor(a)</option>
+                                <option value="Auxiliar de TI">Auxiliar de TI</option>
                                 <option value="Professor(a)">Professor(a)</option>
                                 <option value="Outro">Outro</option>
                             </select>
@@ -213,12 +292,12 @@
                         <div class="md:col-span-3 space-y-1">
                             <label class="text-xs font-medium text-slate-600">Departamentos (Múltiplos)</label>
                             <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2 rounded-md border border-slate-200 text-xs">
-                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="direcao" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> Direção</label>
-                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="coordenacao" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> Coord.</label>
-                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="secretaria" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> Secret.</label>
-                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="manutencao" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> Manut.</label>
-                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="compras" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> Compras</label>
-                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="financeiro" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> Financ.</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="direcao" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> <span>Direção <span class="text-blue-600 font-semibold">(Andrea Macchia)</span></span></label>
+                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="secretaria" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> <span>Secretaria <span class="text-blue-600 font-semibold">(Veronica / Alessandra / Élida)</span></span></label>
+                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="coordenacao" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> <span>Coord. <span class="text-blue-600 font-semibold">(Michele / Ana Lúcia / Sandro)</span></span></label>
+                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="compras" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> <span>Compras <span class="text-blue-600 font-semibold">(Wagner)</span></span></label>
+                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="manutencao" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> <span>Manut. <span class="text-blue-600 font-semibold">(Fabrício / Wagner)</span></span></label>
+                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="au-dept" value="financeiro" onchange="toggleManagerSelect('au-dept', 'au-manager-container')" class="rounded border-slate-300 text-blue-600"> <span>Finan. <span class="text-blue-600 font-semibold">(Aline / Tercílio)</span></span></label>
                             </div>
                         </div>
 
@@ -339,6 +418,10 @@
                         <option value="Analista Financeiro(a)">Analista Financeiro(a)</option>
                         <option value="Auxiliar Financeiro(a)">Auxiliar Financeiro(a)</option>
                         <option value="Administrador(a) de TI">Administrador(a) de TI</option>
+                        <option value="Vendedoras">Vendedoras</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Inspetor(a)">Inspetor(a)</option>
+                        <option value="Auxiliar de TI">Auxiliar de TI</option>
                         <option value="Professor(a)">Professor(a)</option>
                         <option value="Outro">Outro</option>
                     </select>
@@ -348,12 +431,12 @@
                 <div class="space-y-1">
                     <label class="text-sm font-medium text-slate-700">Departamentos (Múltiplos)</label>
                     <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2 rounded-md border border-slate-200 text-xs">
-                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="direcao" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> Direção</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="coordenacao" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> Coord.</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="secretaria" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> Secret.</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="manutencao" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> Manut.</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="compras" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> Compras</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="financeiro" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> Financ.</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="direcao" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> <span>Direção <span class="text-blue-600 font-semibold">(Andrea Macchia)</span></span></label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="secretaria" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> <span>Secretaria <span class="text-blue-600 font-semibold">(Veronica / Alessandra / Élida)</span></span></label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="coordenacao" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> <span>Coord. <span class="text-blue-600 font-semibold">(Michele / Ana Lúcia / Sandro)</span></span></label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="compras" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> <span>Compras <span class="text-blue-600 font-semibold">(Wagner)</span></span></label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="manutencao" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> <span>Manut. <span class="text-blue-600 font-semibold">(Fabrício / Wagner)</span></span></label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="eu-dept" value="financeiro" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> <span>Finan. <span class="text-blue-600 font-semibold">(Aline / Tercílio)</span></span></label>
                         <label class="flex items-center gap-1.5 cursor-pointer col-span-2"><input type="checkbox" name="eu-dept" value="admin" onchange="toggleManagerSelect('eu-dept', 'eu-manager-container')" class="rounded border-slate-300 text-blue-600"> TI (Admin)</label>
                     </div>
                 </div>
@@ -397,7 +480,14 @@
                 { id: 'u2', name: 'Michele - Infantil', username: 'michele.infantil', password: '123mudar', role: 'Coordenador(a) Pedagógico(a)', departments: ['coordenacao'], phone: '', document: '', managerId: '' },
                 { id: 'u3', name: 'Ana Lúcia - Fundamental 1', username: 'analucia.fund1', password: '123mudar', role: 'Coordenador(a) Pedagógico(a)', departments: ['coordenacao'], phone: '', document: '', managerId: '' },
                 { id: 'u4', name: 'Sandro - Fundamental 2 e Médio', username: 'sandro.fund2', password: '123mudar', role: 'Coordenador(a) Pedagógico(a)', departments: ['coordenacao'], phone: '', document: '', managerId: '' },
-                { id: 'u5', name: 'Andrea Macchia', username: 'andrea.macchia', password: '123mudar', role: 'Diretor(a)', departments: ['direcao'], phone: '', document: '', managerId: '' }
+                { id: 'u5', name: 'Andrea Macchia', username: 'andrea.macchia', password: '123mudar', role: 'Diretor(a)', departments: ['direcao'], phone: '', document: '', managerId: '' },
+                { id: 'u6', name: 'Veronica - Prédio 1', username: 'veronica.secretaria', password: '123mudar', role: 'Secretário(a) Escolar', departments: ['secretaria'], phone: '', document: '', managerId: '' },
+                { id: 'u7', name: 'Alessandra - Prédio 2', username: 'alessandra.secretaria', password: '123mudar', role: 'Secretário(a) Escolar', departments: ['secretaria'], phone: '', document: '', managerId: '' },
+                { id: 'u8', name: 'Élida - Prédio 3', username: 'elida.secretaria', password: '123mudar', role: 'Secretário(a) Escolar', departments: ['secretaria'], phone: '', document: '', managerId: '' },
+                { id: 'u9', name: 'Wagner', username: 'wagner', password: '123mudar', role: 'Analista de Compras', departments: ['compras', 'manutencao'], phone: '', document: '', managerId: '' },
+                { id: 'u10', name: 'Fabrício', username: 'fabricio', password: '123mudar', role: 'Técnico(a) de Manutenção', departments: ['manutencao'], phone: '', document: '', managerId: '' },
+                { id: 'u11', name: 'Aline', username: 'aline.financeiro', password: '123mudar', role: 'Analista Financeiro(a)', departments: ['financeiro'], phone: '', document: '', managerId: '' },
+                { id: 'u12', name: 'Tercílio', username: 'tercilio.financeiro', password: '123mudar', role: 'Auxiliar Financeiro(a)', departments: ['financeiro'], phone: '', document: '', managerId: '' }
             ],
             tickets: []
         };
@@ -418,6 +508,27 @@
         const getElement = id => document.getElementById(id);
         const hide = id => getElement(id).classList.add('hidden');
         const show = id => getElement(id).classList.remove('hidden');
+
+        // --- TEMA CLARO/ESCURO ---
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            localStorage.setItem('esmeraldas_theme', isDark ? 'dark' : 'light');
+            const icon = document.querySelector('#btn-theme i');
+            icon.className = isDark ? 'fa-solid fa-sun text-lg' : 'fa-solid fa-moon text-lg';
+        }
+
+        function loadTheme() {
+            const saved = localStorage.getItem('esmeraldas_theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (saved === 'dark' || (!saved && prefersDark)) {
+                document.documentElement.classList.add('dark');
+                const icon = document.querySelector('#btn-theme i');
+                if (icon) icon.className = 'fa-solid fa-sun text-lg';
+            }
+        }
+        loadTheme();
 
         // --- MÁSCARAS BRASILEIRAS (CPF E TELEFONE) ---
         function applyCPFMask(input) {
