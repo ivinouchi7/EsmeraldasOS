@@ -396,7 +396,8 @@
                 { id: 'u1', name: 'Guilherme Macchia', username: 'guilherme', password: 'admin123', role: 'Administrador(a) de TI', departments: ['admin'], phone: '', document: '', managerId: '' },
                 { id: 'u2', name: 'Michele - Infantil', username: 'michele.infantil', password: '123mudar', role: 'Coordenador(a) Pedagógico(a)', departments: ['coordenacao'], phone: '', document: '', managerId: '' },
                 { id: 'u3', name: 'Ana Lúcia - Fundamental 1', username: 'analucia.fund1', password: '123mudar', role: 'Coordenador(a) Pedagógico(a)', departments: ['coordenacao'], phone: '', document: '', managerId: '' },
-                { id: 'u4', name: 'Sandro - Fundamental 2 e Médio', username: 'sandro.fund2', password: '123mudar', role: 'Coordenador(a) Pedagógico(a)', departments: ['coordenacao'], phone: '', document: '', managerId: '' }
+                { id: 'u4', name: 'Sandro - Fundamental 2 e Médio', username: 'sandro.fund2', password: '123mudar', role: 'Coordenador(a) Pedagógico(a)', departments: ['coordenacao'], phone: '', document: '', managerId: '' },
+                { id: 'u5', name: 'Andrea Macchia', username: 'andrea.macchia', password: '123mudar', role: 'Diretor(a)', departments: ['direcao'], phone: '', document: '', managerId: '' }
             ],
             tickets: []
         };
@@ -447,30 +448,67 @@
             input.value = value;
         }
 
-        // Alterna campo de Gestor baseado na existência do departamento 'secretaria' marcado
+        // Alterna campo de Gestor baseado na existência de departamentos que possuam gestores mapeados
         function toggleManagerSelect(nameGroup, containerId) {
-            const checkboxes = document.querySelectorAll(`input[name="${nameGroup}"]:checked`);
-            let isSecretaria = false;
-            checkboxes.forEach(cb => {
-                if (cb.value === 'secretaria') isSecretaria = true;
-            });
+            const checkboxes = Array.from(document.querySelectorAll(`input[name="${nameGroup}"]:checked`));
+            const checkedValues = checkboxes.map(cb => cb.value);
+
+            const managerDeptKeys = Object.keys(departmentManagers);
+            const needsManager = checkedValues.some(v => managerDeptKeys.includes(v));
 
             const container = getElement(containerId);
-            if (isSecretaria) {
+            const selectId = nameGroup === 'au-dept' ? 'au-manager' : 'eu-manager';
+            if (needsManager) {
                 container.classList.remove('hidden');
-                populateManagersDropdown(nameGroup === 'au-dept' ? 'au-manager' : 'eu-manager');
+                populateManagersDropdown(selectId, nameGroup);
             } else {
                 container.classList.add('hidden');
+                const sel = getElement(selectId);
+                if (sel) sel.innerHTML = '<option value="">Selecione...</option>';
             }
         }
 
-        // Popula as opções de gestores ativos no dropdown (Direção ou Coordenação)
-        function populateManagersDropdown(selectId, selectedId = '') {
+        // Mapeamento estático de gestores por departamento (adiciona nomes fixos mesmo que não existam como usuários)
+        const departmentManagers = {
+            direcao: [ { id: 'm_andrea', name: 'Andrea Macchia', role: 'Gestor' } ],
+            secretaria: [ { id: 'sec_p1', name: 'Veronica', role: 'Secretaria Prédio 1' }, { id: 'sec_p2', name: 'Alessandra', role: 'Secretaria Prédio 2' }, { id: 'sec_p3', name: 'Élida', role: 'Secretaria Prédio 3' } ],
+            compras: [ { id: 'compr_wagner', name: 'Wagner', role: 'Compras' } ],
+            coordenacao: [ { id: 'coord_michele', name: 'Michele - Infantil', role: 'Coord.' }, { id: 'coord_analucia', name: 'Ana Lúcia - Fundamental 1', role: 'Coord.' }, { id: 'coord_sandro', name: 'Sandro - Fundamental 2 e Médio', role: 'Coord.' } ],
+            manutencao: [ { id: 'manu_fabricio', name: 'Fábricio', role: 'Manut.' }, { id: 'manu_wagner', name: 'Wagner', role: 'Manut.' } ],
+            financeiro: [ { id: 'fin_aline', name: 'Aline', role: 'Finan.' }, { id: 'fin_tercilio', name: 'Tercílio', role: 'Finan.' } ]
+        };
+
+        // Popula as opções de gestores no dropdown com base nos departamentos marcados.
+        // Se nenhum gestor está disponível a partir do mapeamento estático, usa usuários existentes (coord / direcao).
+        function populateManagersDropdown(selectId, nameGroup = 'au-dept', selectedId = '') {
             const select = getElement(selectId);
-            const managers = users.filter(u => u.departments && (u.departments.includes('coordenacao') || u.departments.includes('direcao')));
-            
-            select.innerHTML = '<option value="">Selecione...</option>' + 
-                managers.map(m => `<option value="${m.id}" ${m.id === selectedId ? 'selected' : ''}>${m.name} (${m.departments.includes('direcao') ? 'Direção' : 'Coord.'})</option>`).join('');
+            const checked = Array.from(document.querySelectorAll(`input[name="${nameGroup}"]:checked`)).map(cb => cb.value);
+
+            const added = [];
+            const seen = new Set();
+
+            checked.forEach(dept => {
+                const list = departmentManagers[dept] || [];
+                list.forEach(m => {
+                    if (!seen.has(m.id)) {
+                        added.push(m);
+                        seen.add(m.id);
+                    }
+                });
+            });
+
+            // fallback: incluir gestores existentes (direção / coordenação) caso não tenha mapeamento estático
+            if (added.length === 0) {
+                users.filter(u => u.departments && (u.departments.includes('coordenacao') || u.departments.includes('direcao')))
+                     .forEach(u => {
+                        if (!seen.has(u.id)) {
+                            added.push({ id: u.id, name: u.name, role: u.departments.includes('direcao') ? 'Direção' : 'Coord.' });
+                            seen.add(u.id);
+                        }
+                     });
+            }
+
+            select.innerHTML = '<option value="">Selecione...</option>' + added.map(m => `<option value="${m.id}" ${m.id === selectedId ? 'selected' : ''}>${m.name} ${m.role ? ' - ' + m.role : ''}</option>`).join('');
         }
 
         // Determina quem pode gerenciar cada status de forma granular unindo departamentos do usuário
@@ -711,6 +749,8 @@
                 baseTickets = tickets.filter(t => visibleTicketIds.has(t.id));
             }
 
+            baseTickets = baseTickets.filter(t => t.status !== 'Concluído');
+
             if (currentFilter !== 'Todas') {
                 baseTickets = baseTickets.filter(t => t.category === currentFilter);
             }
@@ -780,7 +820,6 @@
             kanbanHtml += createColumn('Aguard. Financeiro', 'fa-solid fa-circle-dollar-to-slot', 'purple', 'purple', getCount('Aguardando Financeiro'), getHtmlForStatus('Aguardando Financeiro'));
             kanbanHtml += createColumn('Lib. p/ Comprar', 'fa-solid fa-credit-card', 'indigo', 'indigo', getCount('Liberado para Compra'), getHtmlForStatus('Liberado para Compra'));
             kanbanHtml += createColumn('Comprado', 'fa-solid fa-box', 'teal', 'teal', getCount('Comprado'), getHtmlForStatus('Comprado'));
-            kanbanHtml += createColumn('Concluídos', 'fa-solid fa-check-circle', 'green', 'green', getCount('Concluído'), getHtmlForStatus('Concluído'));
             
             kanbanHtml += '</div>';
             container.innerHTML = kanbanHtml;
@@ -889,6 +928,7 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${vinculationText}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2">
                         <button onclick="openEditUser('${user.id}')" class="text-blue-600 hover:text-blue-900 bg-blue-50 p-1.5 rounded" title="Editar Usuário"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="handleDeleteUser('${user.id}')" class="text-red-600 hover:text-red-900 bg-red-50 p-1.5 rounded" title="Excluir Usuário"><i class="fa-solid fa-trash-can"></i></button>
                     </td>
                 </tr>
             `;}).join('');
@@ -940,7 +980,7 @@
             const container = getElement('admin-tickets-container');
             const empty = getElement('admin-tickets-empty');
 
-            const filtered = tickets.filter(t => getAdminCategory(t) === adminTicketFilter);
+            const filtered = tickets.filter(t => t.status !== 'Concluído' && getAdminCategory(t) === adminTicketFilter);
 
             if (filtered.length === 0) {
                 container.innerHTML = '';
@@ -1054,7 +1094,7 @@
                 const managerContainer = getElement('eu-manager-container');
                 if (userToEdit.departments && userToEdit.departments.includes('secretaria')) {
                     managerContainer.classList.remove('hidden');
-                    populateManagersDropdown('eu-manager', userToEdit.managerId);
+                    populateManagersDropdown('eu-manager', 'eu-dept', userToEdit.managerId);
                 } else {
                     managerContainer.classList.add('hidden');
                 }
@@ -1096,6 +1136,31 @@
                 renderAdminTable();
                 closeModal('modal-edit-user');
             }
+        }
+
+        function handleDeleteUser(id) {
+            const user = users.find(u => u.id === id);
+            if (!user) return;
+            if (user.id === currentUser?.id) {
+                alert("Você não pode excluir o próprio usuário.");
+                return;
+            }
+            if (user.departments?.includes('admin')) {
+                alert("Não é possível excluir um administrador de TI.");
+                return;
+            }
+            if (!confirm(`Tem certeza que deseja excluir "${user.name}"?`)) return;
+            users = users.filter(u => u.id !== id);
+            tickets.forEach(t => {
+                if (t.requester === user.name) {
+                    t.requester = '[Usuário removido]';
+                }
+            });
+            users.forEach(u => {
+                if (u.managerId === id) u.managerId = '';
+            });
+            salvarDados();
+            renderAdminTable();
         }
 
         // --- CONTROLE GERAL DE MODAIS ---
